@@ -171,14 +171,15 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
             if score0 >= goal or score1 >= goal:
                 break
             who = other(who)
-
     "*** YOUR CODE HERE ***"
     # END PROBLEM 5
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
-    # END PROBLEM 6
+    say = say(score0, score1)
     return score0, score1
+
+    # END PROBLEM 6
 
 
 #######################
@@ -310,6 +311,14 @@ def make_averaged(g, num_samples=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+
+    def average_value(*args):
+        sum = 0
+        for i in range(num_samples):
+            sum += g(*args)
+        return sum / num_samples
+
+    return average_value
     # END PROBLEM 8
 
 
@@ -324,6 +333,16 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+
+    averaged_roll_dice = make_averaged(roll_dice)
+    max = 0
+    num_of_dice = 0
+    for i in range(1, 11):
+        if averaged_roll_dice(i, dice) > max:
+            max = averaged_roll_dice(i, dice)
+            num_of_dice = i
+    return num_of_dice
+
     # END PROBLEM 9
 
 
@@ -372,6 +391,20 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=6):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
+    number = pow(opponent_score, 3)
+    str_number = str(number)
+    current_score = 0
+    for i in range(len(str_number)):
+        current_number = int(str_number[i])
+        if i % 2 == 0:
+            current_score += current_number
+        else:
+            current_score -= current_number
+    if abs(current_score) + 1 >= margin:
+        return 0
+    else:
+        return num_rolls
+
     return 6  # Replace this statement
     # END PROBLEM 10
 
@@ -382,7 +415,29 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=6):
     non-beneficial swap. Otherwise, it rolls NUM_ROLLS.
     """
     # BEGIN PROBLEM 11
-    return 6  # Replace this statement
+    free_bacon_number = pow(opponent_score, 3)
+    str_free_bacon_number = str(free_bacon_number)
+    add_score = 0
+    for i in range(len(str_free_bacon_number)):
+        current_number = int(str_free_bacon_number[i])
+        if i % 2 == 0:
+            add_score += current_number
+        else:
+            add_score -= current_number
+    current_score = score + abs(add_score) + 1
+
+    str_swap_number = str(pow(3, int(current_score + opponent_score)))
+    if str_swap_number[0] == str_swap_number[-1]:
+        if current_score < opponent_score:
+            return 0
+        else:
+            return num_rolls
+    else:
+        if abs(add_score)+1 >= margin:
+            return 0
+        else:
+            return num_rolls
+
     # END PROBLEM 11
 
 
